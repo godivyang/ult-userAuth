@@ -1,72 +1,53 @@
 // const mongoose = require("mongoose");
 
-// mongoose.connect("mongodb://127.0.0.1:27017/ult-userauth-api");
+// // mongoose.connect("mongodb://127.0.0.1:27017/ult-userauth-api");
+// const user = encodeURIComponent("ult-userAuth");
+// const pass = encodeURIComponent("mzqh4S4DsSriBA0o");
+// const dbName = encodeURIComponent("ult-userauth-api");
+// const uri = "mongodb+srv://"+user+":"+pass+"@clusterultimateutility.zkpdpon.mongodb.net/?retryWrites=true&w=majority&appName=ClusterUltimateUtility";
 
-
-// const { MongoClient, ServerApiVersion } = require('mongodb');
-// const password = encodeURIComponent("#9qr2rgyuGOD");
-// const db = "ult-userauth-api";
-// const uri = "mongodb+srv://ult-userAuth:"+password+"@clusterultimateutility.zkpdpon.mongodb.net/?retryWrites=true&w=majority&appName=ClusterUltimateUtility";
-
-// // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-// const client = new MongoClient(uri, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true,
-//   }
-// });
+// const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 
 // async function run() {
 //   try {
-//     // Connect the client to the server	(optional starting in v4.7)
-//     console.log("client")
-//     await client.connect();
-//     console.log("client")
-//     // Send a ping to confirm a successful connection
-//     await client.db("ult-userauth-api").command({ ping: 1 });
+//     // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+//     await mongoose.connect(uri, clientOptions);
+//     await mongoose.connection.db.admin().command({ ping: 1 });
 //     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-//   } finally {
+//   } 
+//   catch (e) {
+//     console.log(e);
+//   }
+//   finally {
 //     // Ensures that the client will close when you finish/error
-//     await client.close();
+//     await mongoose.disconnect();
 //   }
 // }
-// run()
 // run().catch(console.dir);
 
 
-const mongoose = require('mongoose');
-const password = encodeURIComponent("H2n3yeVzhVKEaDpw");
-const uri = `mongodb+srv://ult-userAuth:${password}@clusterultimateutility.zkpdpon.mongodb.net/?retryWrites=true&w=majority&appName=ClusterUltimateUtility`;
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://ult-userAuth:mzqh4S4DsSriBA0o@clusterultimateutility.zkpdpon.mongodb.net/?retryWrites=true&w=majority&appName=ClusterUltimateUtility";
 
-const clientOptions = { 
-    serverApi: { 
-        version: '1', 
-        strict: true, 
-        deprecationErrors: true 
-    },
-    dbName: "ult-user-auth"
-};
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
 
 async function run() {
   try {
-    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
-    await mongoose.connect(uri, clientOptions);
-    await mongoose.connection.db.admin().command({ ping: 1 });
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await mongoose.disconnect();
+    await client.close();
   }
 }
 run().catch(console.dir);
-
-const dns = require('dns');
-
-dns.lookup('cluster0.zkpdpon.mongodb.net', (err, address, family) => {
-  if (err) {
-    console.error('❌ DNS lookup failed:', err.message);
-  } else {
-    console.log(`✅ DNS resolved: ${address}, IPv${family}`);
-  }
-});
