@@ -60,3 +60,13 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+const dns = require('dns');
+
+dns.lookup('cluster0.zkpdpon.mongodb.net', (err, address, family) => {
+  if (err) {
+    console.error('❌ DNS lookup failed:', err.message);
+  } else {
+    console.log(`✅ DNS resolved: ${address}, IPv${family}`);
+  }
+});
