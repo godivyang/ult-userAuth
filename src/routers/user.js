@@ -3,11 +3,21 @@ const router = new express.Router();
 const User = require("../models/user");
 const auth = require("../middleware/auth");
 
+const tokenOptions = {
+    httpOnly: true,
+    secure: process.env.cookie_Secure === "true",
+    sameSite: process.env.cookie_SameSite,
+    maxAge: 7 * 24 * 60 * 60 * 1000
+};
+
 router.post("/user/signup", async (req, res) => {
     try {
         const user = new User(req.body);
         await user.save();
         await user.generateToken();
+
+        res.cookie("token", token, tokenOptions);
+
         res.send(user);
     } catch (e) {
         res.status(400).send(e);
@@ -60,12 +70,7 @@ router.post("/user/login", async (req, res) => {
         const user = await User.authenticate(req.body.email, req.body.password);
         const token = await user.generateToken();
         
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, tokenOptions);
         
         return res.send(user);
     } catch (e) {
