@@ -56,7 +56,7 @@ userSchema.statics.authenticate = async (email, password) => {
 userSchema.methods.generateToken = async function() {
     const token = jwt.sign(
         { _id: this._id.toString() }, 
-        "awakening_ult_userauth", 
+        process.env.JWT_Secret, 
         { expiresIn: "1w" });
     this.tokens = this.tokens.concat({ token });
     await this.save();
