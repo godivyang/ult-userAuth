@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 
 const tokenOptions = {
     httpOnly: true,
-    secure: process.env.cookie_Secure === "true",
+    secure: process.env.cookie_Secure == "true",
     sameSite: process.env.cookie_SameSite,
     maxAge: 7 * 24 * 60 * 60 * 1000
 };
