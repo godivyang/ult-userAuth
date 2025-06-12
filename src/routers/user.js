@@ -14,7 +14,7 @@ router.post("/user/signup", async (req, res) => {
     try {
         const user = new User(req.body);
         await user.save();
-        await user.generateToken();
+        const token = await user.generateToken();
 
         console.log(tokenOptions)
         res.cookie("token", token, tokenOptions);
