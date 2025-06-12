@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const auth = async (req, res, next) => {
-    console.log(`[${req.method}] ${req.url}`);
+    // console.log(`[${req.method}] ${req.url}`);
     try {
         let token;
         // console.log(req.cookies, req.header("Authorization"))
@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
         // }
         if(!token) throw new Error();
 
-        const decoded = jwt.verify(token, "awakening_ult_userauth");
+        const decoded = jwt.verify(token, process.env.JWT_Secret);
         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
 
         if(!user) {
