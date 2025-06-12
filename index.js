@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const userRouter = require("./src/routers/user");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -14,7 +15,7 @@ const allowedOrigins = [
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps, curl, or Postman)
-        console.log(origin);
+        // console.log(origin);
         if(!origin) return callback(null, true);
 
         if(allowedOrigins.includes(origin)) {
