@@ -16,6 +16,7 @@ router.post("/user/signup", async (req, res) => {
         await user.save();
         await user.generateToken();
 
+        console.log(tokenOptions)
         res.cookie("token", token, tokenOptions);
 
         res.send(user);
@@ -70,6 +71,7 @@ router.post("/user/login", async (req, res) => {
         const user = await User.authenticate(req.body.email, req.body.password);
         const token = await user.generateToken();
         
+        console.log(tokenOptions)
         res.cookie("token", token, tokenOptions);
         
         return res.send(user);
