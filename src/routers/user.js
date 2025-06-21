@@ -102,4 +102,8 @@ router.post("/user/logoutAll", auth, async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+    res.send("Welcome to User Authentication app!");
+});
+
 module.exports = router;
