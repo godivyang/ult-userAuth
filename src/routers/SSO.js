@@ -5,6 +5,7 @@ const auth = require("../middleware/auth");
 
 router.get("/sso/crossAppLogin", auth, async (req, res) => {
     try {
+        console.log("SSO router", req.user);
         const token = await SSO.generateSingleSignOnToken(req.user._id.toString());
 console.log("token", token);
         res.send({ token });
