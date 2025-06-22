@@ -21,7 +21,7 @@ ssoSchema.statics.generateSingleUseToken = async function(userID) {
         
         await SSO.save({ token, userID });
         
-        return "Token generated successfully!";
+        return token;
     } catch (e) {
         throw new Error({message: "SSO token generation failed!"});
     }
