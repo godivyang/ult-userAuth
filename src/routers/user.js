@@ -28,6 +28,7 @@ router.post("/user/signup", async (req, res) => {
 });
 
 router.get("/user/me", auth, async (req, res) => {
+    res.cookie("token", token, tokenOptions);
     res.send(req.user);
 });
 
