@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const userRouter = require("./src/routers/user");
+const ssoRouter = require("./src/routers/SSO");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("./src/db/mongoose");
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(userRouter);
+app.use(ssoRouter);
 
 app.listen(port, () => {
     console.log("Ultimate Utility user auth server is up on port", port);
