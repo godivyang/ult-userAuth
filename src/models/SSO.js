@@ -23,6 +23,7 @@ ssoSchema.statics.generateSingleUseToken = async function(userID) {
         
         return token;
     } catch (e) {
+        console.log("error while creating sso token", e);
         throw new Error({message: "SSO token generation failed!"});
     }
 };

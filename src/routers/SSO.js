@@ -9,7 +9,7 @@ router.get("/sso/crossAppLogin", auth, async (req, res) => {
 console.log("token", token);
         res.send({ token });
     } catch (e) {
-        res.send(e);
+        res.status(500).send(e);
     }
 });
 
