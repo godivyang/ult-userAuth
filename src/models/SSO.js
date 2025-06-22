@@ -20,7 +20,8 @@ ssoSchema.statics.generateSingleSignOnToken = async function(userID) {
             { expiresIn: 120 });
         
         console.log("sso token", token, userID);
-            await SSO.save({ token, userID });
+        const ssoToken = new SSO({ token, userID });
+        await ssoToken.save();
         console.log("sso token", token);
         return token;
     } catch (e) {
