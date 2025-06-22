@@ -19,7 +19,8 @@ ssoSchema.statics.generateSingleUseToken = async function(userID) {
             process.env.JWT_Secret_SSO, 
             { expiresIn: 120 });
         
-        await SSO.save({ token, userID });
+        console.log("sso token", token, userID);
+            await SSO.save({ token, userID });
         console.log("sso token", token);
         return token;
     } catch (e) {
