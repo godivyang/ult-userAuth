@@ -12,7 +12,7 @@ const ssoSchema = new mongoose.Schema({
     }
 });
 
-ssoSchema.statics.generateSingleUseToken = async function(userID) {
+ssoSchema.statics.generateSingleSignOnToken = async function(userID) {
     try {
         const token = jwt.sign(
             { _id: userID }, 
