@@ -33,7 +33,10 @@ ssoSchema.statics.generateSSOToken = async function(userID, userToken) {
 ssoSchema.statics.verifySSOToken = async function(code) {
     try {
         const sso = await SSO.findById(code);
-        if(jwt.verify(sso.token, process.env.JWT_Secret_SSO)) return sso.userToken;
+        if(jwt.verify(sso.token, process.env.JWT_Secret_SSO)) {
+            ssoToken.delete();
+            return sso.userToken;
+        }
         throw new Error();
     } catch (e) {
         throw new Error({message: "Error: SSO token verification failed!"});
