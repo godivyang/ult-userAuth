@@ -29,6 +29,10 @@ router.get("/user/me", auth, async (req, res) => {
     res.send(req.user);
 });
 
+router.post("/user/me", auth, async (req, res) => {
+    res.send(req.user);
+});
+
 router.post("/user/isValid", async (req, res) => {
     try {
         const user = await User.verifyToken(req.body.token);
