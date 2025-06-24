@@ -5,8 +5,6 @@ const auth = require("../middleware/auth");
 
 const tokenOptions = {
     httpOnly: true,
-    domain: ".web.app",
-    path: "/",
     secure: process.env.cookie_Secure == "true",
     sameSite: process.env.cookie_SameSite,
     maxAge: 7 * 24 * 60 * 60 * 1000
@@ -31,8 +29,14 @@ router.get("/user/me", auth, async (req, res) => {
     res.send(req.user);
 });
 
-router.get("/user/isValid", auth, async (req, res) => {
-    res.send(req.user._id);
+router.post("/user/isValid", async (req, res) => {
+    try {
+        const user = await User.verifyToken(req.body.token);
+        res.send(user);
+    } catch (e) {
+        res.status(500).send({message: "Error: Token validation failed!"})
+    }
+    res.send(req.user);
 });
 
 router.get("/users", auth, async (req, res) => {

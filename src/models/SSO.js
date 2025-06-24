@@ -6,29 +6,39 @@ const ssoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    userID: {
+    userToken: {
         type: String,
         required: true
     }
 });
 
-ssoSchema.statics.generateSingleSignOnToken = async function(userID) {
+ssoSchema.statics.generateSSOToken = async function(userID, userToken) {
     try {
         const token = jwt.sign(
             { _id: userID }, 
             process.env.JWT_Secret_SSO, 
             { expiresIn: 120 });
         
-        console.log("sso token", token, userID);
-        const ssoToken = new SSO({ token, userID });
+        // console.log("sso token", token, userID);
+        const ssoToken = new SSO({ token, userToken });
         await ssoToken.save();
-        console.log("sso token", token);
-        return token;
+        // console.log("sso token", token);
+        return ssoToken._id;
     } catch (e) {
-        console.log("error while creating sso token", e);
-        throw new Error({message: "SSO token generation failed!"});
+        // console.log("error while creating sso token", e);
+        throw new Error({message: "Error: SSO token generation failed!"});
     }
 };
+
+ssoSchema.statics.verifySSOToken = async function(code) {
+    try {
+        const sso = await SSO.findById(code);
+        if(jwt.verify(sso.token, process.env.JWT_Secret_SSO)) return sso.userToken;
+        throw new Error();
+    } catch (e) {
+        throw new Error({message: "Error: SSO token verification failed!"});
+    }
+}
 
 const SSO = mongoose.model("SSO", ssoSchema);
 
