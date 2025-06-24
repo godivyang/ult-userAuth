@@ -11,7 +11,8 @@ const port = process.env.PORT || 3001;
 
 const allowedOrigins = [
     "http://localhost:3000",
-    "https://ultimate-utility.web.app"
+    "https://ultimate-utility.web.app",
+    "https://ult-trackingbudget.onrender.com"
 ];
 app.use(cors({
     origin: function (origin, callback) {
