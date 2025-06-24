@@ -5,10 +5,11 @@ const auth = async (req, res, next) => {
     // console.log(`${req.cookies.token}`);
     try {
         let token = req.cookies.token || req.body.token;
-        console.log("token", req.body)
+        // console.log("token", req.body)
         if(!token) throw new Error();
 
         const decoded = jwt.verify(token, process.env.JWT_Secret);
+        // console.log(decoded)
         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
 // console.log("user from auth.js", user);
         if(!user) {

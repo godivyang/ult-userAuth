@@ -32,9 +32,12 @@ ssoSchema.statics.generateSSOToken = async function(userID, userToken) {
 
 ssoSchema.statics.verifySSOToken = async function(code) {
     try {
+        console.log(code)
         const sso = await SSO.findById(code);
+        // console.log(sso);
         if(jwt.verify(sso.token, process.env.JWT_Secret_SSO)) {
-            ssoToken.delete();
+            // console.log(sso)
+            await sso.deleteOne();
             return sso.userToken;
         }
         throw new Error();
