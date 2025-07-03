@@ -30,18 +30,18 @@ router.get("/user/me", auth, async (req, res) => {
 });
 
 router.post("/user/me", auth, async (req, res) => {
-    res.send(req.user);
+    res.send({userId: req.user._id, userName: req.user.name});
 });
 
-router.post("/user/isValid", async (req, res) => {
-    try {
-        const user = await User.verifyToken(req.body.token);
-        res.send(user);
-    } catch (e) {
-        res.status(500).send({message: "Error: Token validation failed!"})
-    }
-    res.send(req.user);
-});
+// router.post("/user/isValid", async (req, res) => {
+//     try {
+//         const user = await User.verifyToken(req.body.token);
+//         res.send(user);
+//     } catch (e) {
+//         res.status(500).send({message: "Error: Token validation failed!"})
+//     }
+//     res.send(req.user);
+// });
 
 router.get("/users", auth, async (req, res) => {
     try {
@@ -107,6 +107,20 @@ router.post("/user/logoutAll", auth, async (req, res) => {
         res.send("Logged out successfully from all devices!");
     } catch (e) {
         res.status(500).send(e);
+    }
+});
+
+router.post("/user/guestLogin", async (req, res) => {
+    try {
+        const user = await User.authenticate(process.env.GUEST_EMAIL, process.env.GUEST_PASSWORD);
+        const token = await user.generateToken();
+        
+        // console.log(tokenOptions)
+        res.cookie("token", token, tokenOptions);
+        
+        return res.send(user);
+    } catch (e) {
+        res.status(500).send({message: "Error: Guest login failed."});
     }
 });
 

@@ -63,21 +63,21 @@ userSchema.methods.generateToken = async function() {
     return token;
 };
 
-userSchema.statics.verifyToken = async function() {
-    try {
-        if(!token) throw new Error();
+// userSchema.statics.verifyToken = async function() {
+//     try {
+//         if(!token) throw new Error();
 
-        const decoded = jwt.verify(token, process.env.JWT_Secret);
-        const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
-// console.log("user from auth.js", user);
-        if(!user) {
-            throw new Error();
-        }
-        return user;
-    } catch (e) {
-        throw new Error({ error: "Error: User not found!" });
-    }
-};
+//         const decoded = jwt.verify(token, process.env.JWT_Secret);
+//         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
+        
+//         if(!user) {
+//             throw new Error();
+//         }
+//         return user;
+//     } catch (e) {
+//         throw new Error({ error: "Error: User not found!" });
+//     }
+// };
 
 userSchema.methods.toJSON = function() {
     let userObject = this.toObject();
