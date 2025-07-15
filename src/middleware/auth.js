@@ -4,8 +4,12 @@ const User = require("../models/user");
 const auth = async (req, res, next) => {
     // console.log(`${req.cookies.token}`);
     try {
-        let token = req.body.token || req.cookies.token;
+        let token = req.cookies.token || req.body.token;
         // console.log("token", req.body)
+        if(req.body && req.body.token) {
+            console.log("Step 1 success", req.body.token, token);
+        }
+
         if(!token) throw new Error();
 
         const decoded = jwt.verify(token, process.env.JWT_Secret);
