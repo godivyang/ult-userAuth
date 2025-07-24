@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
 
     if (!token) throw new Error();
 
-    const decoded = jwt.verify(token, process.env.JWT_Secret);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // console.log("decoded", decoded)
     const user = await User.findOne({
       "_id": decoded._id,

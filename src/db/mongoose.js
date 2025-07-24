@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // mongoose.connect("mongodb://127.0.0.1:27017/ult-userauth-api");
-const uri = process.env.mongoDB_URI;
+const uri = process.env.MONGODB_URI;
 
 const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 

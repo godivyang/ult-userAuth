@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const uri = process.env.mongoDB_URI;
+const uri = process.env.MONGODB_URI;
 
 const clientOptions = {serverApi: {
   version: "1",

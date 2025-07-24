@@ -56,28 +56,12 @@ userSchema.statics.authenticate = async (email, password) => {
 userSchema.methods.generateToken = async function() {
     const token = jwt.sign(
         { _id: this._id.toString() }, 
-        process.env.JWT_Secret, 
+        process.env.JWT_SECRET, 
         { expiresIn: "1w" });
     this.tokens = this.tokens.concat({ token });
     await this.save();
     return token;
 };
-
-// userSchema.statics.verifyToken = async function() {
-//     try {
-//         if(!token) throw new Error();
-
-//         const decoded = jwt.verify(token, process.env.JWT_Secret);
-//         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
-        
-//         if(!user) {
-//             throw new Error();
-//         }
-//         return user;
-//     } catch (e) {
-//         throw new Error({ error: "Error: User not found!" });
-//     }
-// };
 
 userSchema.methods.toJSON = function() {
     let userObject = this.toObject();
