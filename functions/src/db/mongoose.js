@@ -22,5 +22,6 @@ async function run() {
     // await mongoose.disconnect();
   }
 }
-run().catch(console.dir);
+// run().catch(console.dir);
+run().catch();
 
