@@ -6,16 +6,16 @@ const auth = async (req, res, next) => {
     try {
         let token = req.cookies.token || req.body.token;
         // console.log("token", req.body)
-        if(req.body && req.body.token) {
-            console.log("Step 1 success", req.body.token, token);
-        }
+        // if(req.body && req.body.token) {
+        //     console.log("Step 1 success", req.body.token, token);
+        // }
 
         if(!token) throw new Error();
 
         const decoded = jwt.verify(token, process.env.JWT_Secret);
         // console.log("decoded", decoded)
         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
-console.log("user from auth.js", user);
+// console.log("user from auth.js", user);
         if(!user) {
             throw new Error();
         }
