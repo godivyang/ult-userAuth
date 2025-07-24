@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "theawakening-zg"
+  },
+  "targets": {
+    "theawakening-zg": {
+      "hosting": {
+        "ult-userauth": [
+          "ult-userauth"
+        ]
+      }
+    }
   }
 }
