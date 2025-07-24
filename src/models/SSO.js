@@ -16,7 +16,7 @@ ssoSchema.statics.generateSSOToken = async function(userID, userToken) {
     try {
         const token = jwt.sign(
             { _id: userID }, 
-            process.env.JWT_Secret_SSO, 
+            process.env.JWT_SECRET_SSO, 
             { expiresIn: 120 });
         
         // console.log("sso token", token, userID);
@@ -32,10 +32,10 @@ ssoSchema.statics.generateSSOToken = async function(userID, userToken) {
 
 ssoSchema.statics.verifySSOToken = async function(code) {
     try {
-        console.log(code)
+        // console.log(code)
         const sso = await SSO.findById(code);
         // console.log(sso);
-        if(jwt.verify(sso.token, process.env.JWT_Secret_SSO)) {
+        if(jwt.verify(sso.token, process.env.JWT_SECRET_SSO)) {
             // console.log(sso)
             await sso.deleteOne();
             return sso.userToken;
