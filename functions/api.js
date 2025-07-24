@@ -4,7 +4,6 @@ const userRouter = require("./src/routers/user");
 const ssoRouter = require("./src/routers/SSO");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-require("./src/db/mongoose");
 
 const app = express();
 
@@ -23,6 +22,8 @@ app.use(cors({
   },
   credentials: true,
 }));
+
+require("./src/db/mongoose");
 
 app.use(express.json());
 
