@@ -12,6 +12,7 @@ const allowedOrigin = process.env.ULTIMATE_UTILITY_FRONTEND_URL;
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps, curl, or Postman)
+    console.log(origin);
     if (!origin) return callback(null, true);
 
     if (allowedOrigin === origin) {
@@ -29,5 +30,7 @@ app.use(cookieParser());
 
 app.use("/api/user", userRouter);
 app.use("/api/sso", ssoRouter);
+
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
 module.exports = app;
