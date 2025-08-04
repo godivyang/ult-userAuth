@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const userRouter = require("./src/routers/user");
 const ssoRouter = require("./src/routers/SSO");
+const helperRouter = require("./src/routers/helper");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("./src/db/mongoose");
@@ -9,14 +10,13 @@ require("./src/db/mongoose");
 const app = express();
 const port = process.env.PORT || 4000;
 
-const allowedOrigin = process.env.ULTIMATE_UTILITY_FRONTEND_URL;
+const allowedOrigins = [process.env.ULTIMATE_UTILITY_FRONTEND_URL, process.env.TYPING_BLISS_FRONTEND_URL];
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps, curl, or Postman)
-        console.log(origin);
         if(!origin) return callback(null, true);
-
-        if(allowedOrigin === origin) {
+        
+        if(allowedOrigins.includes(origin)) {
             return callback(null, true);
         } else {
             return callback(new Error('Not allowed by CORS'));
@@ -31,6 +31,7 @@ app.use(cookieParser());
 
 app.use(userRouter);
 app.use(ssoRouter);
+app.use(helperRouter);
 
 app.listen(port, () => {
     console.log("Ultimate Utility user auth server is up on port", port);
