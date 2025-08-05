@@ -19,6 +19,7 @@ const tokenOptions = {
 
 router.post("/typingbliss/user/me", helperAuth, async (req, res) => {
     // console.log("hello")
+    console.log(req.email, req.userName);
     const customToken = await admin.auth().createCustomToken(req.userId.toString(), {
         email: req.email,
         username: req.userName,
