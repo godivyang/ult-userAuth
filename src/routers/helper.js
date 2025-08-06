@@ -9,7 +9,8 @@ const serviceAccount = JSON.parse(
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL
   });
 }
 
