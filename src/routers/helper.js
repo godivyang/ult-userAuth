@@ -22,6 +22,10 @@ if (!admin.apps.length) {
   });
 }
 
+console.log("KEY START");
+console.log(process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'));
+console.log("KEY END");
+
 const tokenOptions = {
     httpOnly: true,
     secure: process.env.COOKIE_SECURE == "true",
@@ -31,7 +35,7 @@ const tokenOptions = {
 
 router.post("/typingbliss/user/me", helperAuth, async (req, res) => {
     // console.log("hello")
-    console.log(req.userId, req.email, req.userName);
+    // console.log(req.userId, req.email, req.userName);
     const customToken = await admin.auth().createCustomToken(req.userId.toString(), {
         email: req.email,
         username: req.userName,
