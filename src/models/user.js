@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -30,12 +29,12 @@ const userSchema = new mongoose.Schema({
             message: (props) => `${props.value} should not contain "password"`
         }
     },
-    tokens: [{
-        token: {
-            type: String,
-            required: true
-        }
-    }]
+    // tokens: [{
+    //     token: {
+    //         type: String,
+    //         required: true
+    //     }
+    // }]
 });
 
 userSchema.pre("save", async function(next) {
@@ -53,20 +52,10 @@ userSchema.statics.authenticate = async (email, password) => {
     return user;
 };
 
-userSchema.methods.generateToken = async function() {
-    const token = jwt.sign(
-        { _id: this._id.toString() }, 
-        process.env.JWT_SECRET, 
-        { expiresIn: "1w" });
-    this.tokens = this.tokens.concat({ token });
-    await this.save();
-    return token;
-};
-
 userSchema.methods.toJSON = function() {
     let userObject = this.toObject();
     delete userObject.password;
-    delete userObject.tokens;
+    // delete userObject.tokens;
     delete userObject._id;
     return userObject;
 };

@@ -22,12 +22,10 @@ const tokenOptions = {
 };
 
 router.post("/typingbliss/user/me", helperAuth, async (req, res) => {
-    // console.log("hello")
     // console.log(req.userId, req.email, req.userName);
     const customToken = await admin.auth().createCustomToken(req.userId.toString(), {
         username: req.userName,
     });
-    // res.json({ customToken, userName: req.userName });
     // console.log(customToken)
     res.cookie("token", req.token, tokenOptions);
     res.send({token: customToken, userName: req.userName});
