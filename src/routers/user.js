@@ -183,6 +183,7 @@ router.get("/user/me", auth, async (req, res) => {
 });
 
 router.post("/user/me", auth, async (req, res) => {
+    console.log("user", req.user);
     res.send({
         success: true,
         data: req.user,
