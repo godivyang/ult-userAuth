@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const auth = async (req, res, next) => {
     try {
-        let token = req.body?.token || req.cookies.token;
+        let token = req.cookies.token || req.body?.token;
 
         if(!token) throw new Error();
 
