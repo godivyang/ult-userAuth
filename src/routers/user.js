@@ -183,15 +183,25 @@ router.get("/user/me", auth, async (req, res) => {
 });
 
 router.post("/user/me", auth, async (req, res) => {
-    console.log("user", req.user);
-    res.send({
-        success: true,
-        data: req.user,
-        details: {
-            code: "SUCCESS",
-            message: "User data fetched successfully."
-        }
-    });
+    // console.log("user", req.user);
+    try {
+        res.send({
+            success: true,
+            data: req.user,
+            details: {
+                code: "SUCCESS",
+                message: "User data fetched successfully."
+            }
+        });
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            details: {
+                code: "INTERNAL_ERROR",
+                message: "Token authentication failed."
+            }
+        })
+    }
 });
 
 router.post("/user/logout", auth, async (req, res) => {

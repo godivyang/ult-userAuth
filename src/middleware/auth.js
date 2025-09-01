@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const auth = async (req, res, next) => {
     try {
-        let token = req.cookies.token || req.body.token;
+        let token = req.body?.token || req.cookies.token;
 
         if(!token) throw new Error();
 
@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
         // const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
         console.log("decoded", decoded)
         console.log("token1",req.cookies.token)
-        console.log("token2",req.body.token);
+        console.log("token2",req.body?.token);
         const user = {_id: decoded._id, name: decoded.name, email: decoded.email}
 
         if(!user) {
@@ -22,6 +22,7 @@ const auth = async (req, res, next) => {
         req.user = user;
         next();
     } catch (e) {
+        console.log(e)
         res.status(401).send({
             success: false,
             details: {
