@@ -11,7 +11,7 @@ router.get("/sso/crossAppLogin", auth, async (req, res) => {
 // console.log("token", token);
         res.send({
             success: true,
-            data: code,
+            data: { code },
             details: {
                 code: "SUCCESS",
                 message: "SSO token generated successfully."
