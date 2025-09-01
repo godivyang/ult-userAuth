@@ -29,13 +29,20 @@ const userSchema = new mongoose.Schema({
             message: (props) => `${props.value} should not contain "password"`
         }
     },
-    // tokens: [{
-    //     token: {
-    //         type: String,
-    //         required: true
-    //     }
-    // }]
+    tokens: [{
+        token: {
+            type: String,
+            required: true,
+        },
+        expiresAt: {
+            type: Date,
+            required: true,
+            default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        }
+    }]
 });
+
+userSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 
 userSchema.pre("save", async function(next) {
     if(this.isModified("password")) {
@@ -55,7 +62,7 @@ userSchema.statics.authenticate = async (email, password) => {
 userSchema.methods.toJSON = function() {
     let userObject = this.toObject();
     delete userObject.password;
-    // delete userObject.tokens;
+    delete userObject.tokens;
     delete userObject._id;
     return userObject;
 };

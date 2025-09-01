@@ -40,6 +40,10 @@ router.post("/user/login", async (req, res) => {
         const details = { _id: user._id.toString(), name: user.name, email: user.email };
         const token = generateToken(details);
         const refreshToken = generateRefreshToken(details);
+
+        user.tokens.push({ token: refreshToken });
+        user.tokens = user.tokens.filter((token) => token.token !== req.cookies.refreshToken);
+        await user.save();
         
         res.cookie("token", token, tokenOptions);
         res.cookie("refreshToken", refreshToken, refreshTokenOptions);
@@ -69,6 +73,10 @@ router.post("/user/guestLogin", async (req, res) => {
         const details = { _id: user._id.toString(), name: user.name, email: user.email };
         const token = generateToken(details);
         const refreshToken = generateRefreshToken(details);
+
+        user.tokens.push({ token: refreshToken });
+        user.tokens = user.tokens.filter((token) => token.token !== req.cookies.refreshToken);
+        await user.save();
         
         res.cookie("token", token, tokenOptions);
         res.cookie("refreshToken", refreshToken, refreshTokenOptions);
@@ -95,10 +103,12 @@ router.post("/user/guestLogin", async (req, res) => {
 router.post("/user/signup", async (req, res) => {
     try {
         const user = new User(req.body);
-        await user.save();
         const details = { _id: user._id.toString(), name: user.name, email: user.email };
         const token = generateToken(details);
         const refreshToken = generateRefreshToken(details);
+
+        user.tokens.push({ token: refreshToken });
+        await user.save();
 
         res.cookie("token", token, tokenOptions);
         res.cookie("refreshToken", refreshToken, refreshTokenOptions);
@@ -128,11 +138,19 @@ router.get("/user/refresh", async (req, res) => {
         const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
 
         const details = { _id: decoded._id.toString(), name: decoded.name, email: decoded.email };
+        const user = await User.findById(details._id);
+
+        if(!user.tokens.find((token) => token.token === refreshToken)) throw "Refresh token invalid";
+
         const token = generateToken(details);
         refreshToken = generateRefreshToken(details);
 
         res.cookie("token", token, tokenOptions);
         res.cookie("refreshToken", refreshToken, refreshTokenOptions);
+
+        user.tokens.push({ token: refreshToken });
+        user.tokens = user.tokens.filter((token) => token.token !== refreshToken);
+        await user.save();
 
         res.send({
             success: true,
@@ -177,9 +195,12 @@ router.post("/user/me", auth, async (req, res) => {
 
 router.post("/user/logout", auth, async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.user._id });
-        user.tokens = user.tokens.filter((token) => token.token !== req.token);
+        const user = await User.findById(req.user._id);
+        user.tokens = user.tokens.filter((token) => token.token !== req.cookies.refreshToken);
         await user.save();
+
+        res.cookie("token", "", tokenOptions);
+
         res.send({
             success: true,
             data: {},
@@ -204,6 +225,9 @@ router.post("/user/logoutAll", auth, async (req, res) => {
         const user = await User.findOne({ _id: decoded._id });
         user.tokens = [];
         await user.save();
+
+        res.cookie("token", "", tokenOptions);
+
         res.send({
             success: true,
             data: {},
