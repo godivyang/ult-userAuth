@@ -149,7 +149,7 @@ router.get("/user/refresh", async (req, res) => {
         res.cookie("refreshToken", refreshToken, refreshTokenOptions);
 
         user.tokens.push({ token: refreshToken });
-        user.tokens = user.tokens.filter((token) => token.token !== refreshToken);
+        user.tokens = user.tokens.filter((token) => token.token !== req.cookies.refreshToken);
         await user.save();
 
         res.send({

@@ -5,10 +5,9 @@ const auth = require("../middleware/auth");
 
 router.get("/sso/crossAppLogin", auth, async (req, res) => {
     try {
-        // console.log("SSO router", req.user);
         // code is the object id for the sso token that is getting generated
         const code = await SSO.generateSSOToken(req.user._id.toString(), req.cookies.token);
-// console.log("token", token);
+
         res.send({
             success: true,
             data: { code },
