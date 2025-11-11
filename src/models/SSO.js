@@ -36,7 +36,7 @@ ssoSchema.statics.verifySSOToken = async function(code) {
         const sso = await SSO.findById(code);
         // console.log(sso);
         if(jwt.verify(sso.token, process.env.JWT_SECRET_SSO)) {
-            console.log(sso)
+            // console.log(sso)
             await sso.deleteOne();
             return sso.userToken;
         }
