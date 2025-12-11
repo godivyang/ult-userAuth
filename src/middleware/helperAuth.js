@@ -1,12 +1,17 @@
-const SSO = require("../models/SSO");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+import SSO from "../models/SSO.js";
+import jwt from "jsonwebtoken";
+import User from "../models/user.js";
+import axios from "axios";
+const axiosInstance = axios.create({
+    baseURL: process.env.ULTIMATE_UTILITY_AUTH_URL,
+    withCredentials: true
+});
 
 const helperAuth = async (req, res, next) => {
     try {
-        let token = req.cookies.token;
+        let token = req.cookies?.token;
         
-        if(!token) {
+        if(req.body?.code || !token) {
             if(req.body.code) {
                 token = await checkIfValidCode(req.body.code);
             } else {
@@ -23,12 +28,12 @@ const helperAuth = async (req, res, next) => {
                 throw new Error();
             }
         }
-        const {userName, userId, email} = verifyToken;
-        if(!userName) throw new Error();
+        const {name, _id, email} = verifyToken || {};
+        if(!name) throw new Error();
         
         req.token = token;
-        req.userName = userName;
-        req.userId = userId;
+        req.userName = name;
+        req.userId = _id;
         req.email = email;
         next();
     } catch (e) {
@@ -38,27 +43,20 @@ const helperAuth = async (req, res, next) => {
 
 const checkIfValidCode = async (code) => {
     try {
-        const token = await SSO.verifySSOToken(code);
-        return token;
+        const response = await axiosInstance.post("/sso/crossAppLogin", { code });
+        return response.data.data;
     } catch (e) {
         return undefined;
-    }
+    };
 }
 
 const checkIfValidToken = async (token) => {
     try {
-        if(!token) return undefined;
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
-        if(!user) {
-            return undefined;
-        }
-        // const code = await SSO.generateSSOToken(user._id.toString(), token);
-        return {userName: user.name, userId: user._id, email: user.email};
+        const response = await axiosInstance.post("/user/me", { token });
+        return response.data.data;
     } catch (e) {
         return undefined;
     }
 }
 
-module.exports = helperAuth;
+export default helperAuth;

@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = new express.Router();
-const SSO = require("../models/SSO");
-const auth = require("../middleware/auth");
+import SSO from "../models/SSO.js";
+import auth from "../middleware/auth.js";
 
 router.get("/sso/crossAppLogin", auth, async (req, res) => {
     try {
@@ -49,4 +49,4 @@ router.post("/sso/crossAppLogin", async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

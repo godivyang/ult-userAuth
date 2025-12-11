@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const bcryptjs = require("bcryptjs");
+import mongoose from "mongoose";
+import validator from "validator";
+import bcryptjs from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -69,4 +69,4 @@ userSchema.methods.toJSON = function() {
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+export default User;

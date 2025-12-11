@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = new express.Router();
-const helperAuth = require("../middleware/helperAuth");
-const admin = require('firebase-admin');
+import helperAuth from "../middleware/helperAuth.js";
+import admin from 'firebase-admin';
 
 const serviceAccount = JSON.parse(
   Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8')
@@ -35,4 +35,4 @@ router.get("/", async (req, res) => {
     res.send("Welcome to Tracking Budget app!");
 });
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
 const router = new express.Router();
-const User = require("../models/user");
-const auth = require("../middleware/auth");
-const jwt = require("jsonwebtoken");
+import User from "../models/user.js";
+import auth from "../middleware/auth.js";
+import jwt from "jsonwebtoken";
 
 const tokenOptions = {
     httpOnly: true,
@@ -329,4 +329,4 @@ router.get("/", async (req, res) => {
     res.send("Welcome to User Authentication app!");
 });
 
-module.exports = router;
+export default router;

@@ -1,11 +1,11 @@
-const express = require("express");
-require("dotenv").config();
-const userRouter = require("./src/routers/user");
-const ssoRouter = require("./src/routers/SSO");
-const helperRouter = require("./src/routers/helper");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-require("./src/db/mongoose");
+import express from "express";
+import "dotenv/config";
+import userRouter from "./src/routers/user.js";
+import ssoRouter from "./src/routers/SSO.js";
+import helperRouter from "./src/routers/helper.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import "./src/db/mongoose.js";
 
 const app = express();
 const port = process.env.PORT || 4000;

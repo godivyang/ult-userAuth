@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 
 const ssoSchema = new mongoose.Schema({
     token: {
@@ -48,4 +48,4 @@ ssoSchema.statics.verifySSOToken = async function(code) {
 
 const SSO = mongoose.model("SSO", ssoSchema);
 
-module.exports = SSO;
+export default SSO;
