@@ -19,13 +19,10 @@ ssoSchema.statics.generateSSOToken = async function(userID, userToken) {
             process.env.JWT_SECRET_SSO, 
             { expiresIn: 120 });
         
-        // console.log("sso token", token, userID);
         const ssoToken = new SSO({ token, userToken });
         await ssoToken.save();
-        // console.log("sso token", token);
         return ssoToken._id;
     } catch (e) {
-        // console.log("error while creating sso token", e);
         throw new Error({message: "Error: SSO token generation failed!"});
     }
 };
@@ -35,9 +32,9 @@ ssoSchema.statics.verifySSOToken = async function(code) {
         // console.log(code)
         const sso = await SSO.findById(code);
         // console.log(sso);
+        await sso.deleteOne();
         if(jwt.verify(sso.token, process.env.JWT_SECRET_SSO)) {
             // console.log(sso)
-            await sso.deleteOne();
             return sso.userToken;
         }
         throw new Error();

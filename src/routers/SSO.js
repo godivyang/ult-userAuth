@@ -2,50 +2,40 @@ import express from "express";
 const router = new express.Router();
 import SSO from "../models/SSO.js";
 import auth from "../middleware/auth.js";
+import { getError, getSuccess } from "../middleware/response.js";
 
 router.get("/sso/crossAppLogin", auth, async (req, res) => {
     try {
         // code is the object id for the sso token that is getting generated
-        const code = await SSO.generateSSOToken(req.user._id.toString(), req.cookies.token);
+        const code = await SSO.generateSSOToken(req.user._id.toString(), req.token);
 
-        res.send({
-            success: true,
+        res.send(getSuccess({
             data: { code },
-            details: {
-                code: "SUCCESS",
-                message: "SSO token generated successfully."
-            }
-        });
+            code: "SUCCESS",
+            message: "SSO token generated successfully."
+        }));
+
     } catch (e) {
-        res.status(500).send({
-            success: false,
-            details: {
-                code: "AUTH_FAILED",
-                message: "SSO token generation failed. Please try again."
-            }
-        });
+        console.log(e, req.user)
+        res.status(500).send(getError({
+            code: "AUTH_ERROR",
+            message: "SSO token generation failed. Please try again."
+        }));
     }
 });
 
 router.post("/sso/crossAppLogin", async (req, res) => {
     try {
         const token = await SSO.verifySSOToken(req.body.code);
-        res.send({
-            success: true,
-            data: token,
-            details: {
-                code: "SUCCESS",
-                message: "SSO token verified successfully."
-            }
-        });
+        res.send(getSuccess({
+            message: "SSO token varified successfully.",
+            data: token
+        }));
     } catch (e) {
-        res.status(500).send({
-            success: false,
-            details: {
-                code: "AUTH_FAILED",
-                message: "Token was not found."
-            }
-        })
+        res.status(500).send(getError({
+            code: "AUTH_ERROR",
+            message: "Token was not found."
+        }));
     }
 });
 

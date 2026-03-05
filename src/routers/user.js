@@ -3,12 +3,13 @@ const router = new express.Router();
 import User from "../models/user.js";
 import auth from "../middleware/auth.js";
 import jwt from "jsonwebtoken";
+import { getError, getSuccess } from "../middleware/response.js";
 
 const tokenOptions = {
     httpOnly: true,
     secure: process.env.COOKIE_SECURE == "true",
     sameSite: process.env.COOKIE_SAMESITE,
-    maxAge: 60 * 60 * 1000
+    maxAge: 6 * 60 * 60 * 1000
 };
 
 const refreshTokenOptions = {
@@ -183,24 +184,16 @@ router.get("/user/me", auth, async (req, res) => {
 });
 
 router.post("/user/me", auth, async (req, res) => {
-    // console.log("user", req.user);
     try {
-        res.send({
-            success: true,
-            data: req.user,
-            details: {
-                code: "SUCCESS",
-                message: "User data fetched successfully."
-            }
-        });
+        let code = "SUCCESS", 
+            message = "User data fetched successfully", 
+            data = req.user;
+        res.send(getSuccess({ code, message, data }));
     } catch (e) {
-        res.status(500).send({
-            success: false,
-            details: {
-                code: "INTERNAL_ERROR",
-                message: "Token authentication failed."
-            }
-        })
+        res.status(500).send(getError({
+            code: "AUTH_ERROR", 
+            message: "Token authentication failed."
+        }));
     }
 });
 
@@ -211,23 +204,14 @@ router.post("/user/logout", auth, async (req, res) => {
         await user.save();
 
         res.cookie("token", "", tokenOptions);
+        res.cookie("refreshToken", "", refreshTokenOptions);
 
-        res.send({
-            success: true,
-            data: {},
-            details: {
-                code: "SUCCESS",
-                message: "Logged out successfully."
-            }
-        });
+        res.send(getSuccess({ message: "Logged out successfully" }));
     } catch (e) {
-        res.status(500).send({
-            success: false,
-            details: {
-                code: "INTERNAL_ERROR",
-                message: "User log-out failed. Please try again."
-            }
-        });
+        res.status(500).send(getError({
+            code: "LOGOUT_ERR", 
+            message: "User logout failed. Please try again."
+        }));
     }
 });
 
