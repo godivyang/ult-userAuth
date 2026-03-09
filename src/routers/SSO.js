@@ -16,7 +16,7 @@ router.get("/sso/crossAppLogin", auth, async (req, res) => {
         }));
 
     } catch (e) {
-        console.log(e, req.user)
+        console.log(e.message, req.user)
         res.status(500).send(getError({
             code: "AUTH_ERROR",
             message: "SSO token generation failed. Please try again."
