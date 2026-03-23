@@ -23,16 +23,53 @@ const generateToken = (details) => {
     const token = jwt.sign(
         {...details}, 
         process.env.JWT_SECRET, 
-        { expiresIn: "1h" });
+        { expiresIn: "6h" });
     return token;
 };
 
 const generateRefreshToken = (details) => {
     const token = jwt.sign(
         {...details}, 
-        process.env.JWT_SECRET, 
+        process.env.JWT_REFRESH_SECRET, 
         { expiresIn: "7d" });
     return token;
+};
+
+export const refreshTokenBeforeExpiry = async (token, res) => {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const details = { _id: decoded._id.toString(), name: decoded.name, email: decoded.email };
+
+    const newToken = generateToken(details);
+
+    res.cookie("token", newToken, tokenOptions);
+
+    return newToken;
+};
+
+export const refreshAccessToken = async (refreshToken, res) => {
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+        const details = { _id: decoded._id.toString(), name: decoded.name, email: decoded.email };
+        const user = await User.findById(details._id);
+
+        if(!user.tokens.find((token) => token.token === refreshToken)) throw new Error("Refresh token invalid");
+
+        const token = generateToken(details);
+        const newRefreshToken = generateRefreshToken(details);
+
+        res.cookie("token", token, tokenOptions);
+        res.cookie("refreshToken", newRefreshToken, refreshTokenOptions);
+
+        user.tokens.push({ token: newRefreshToken });
+        user.tokens = user.tokens.filter((token) => token.token !== refreshToken);
+        await user.save();
+
+        return {decoded: details, token};
+        
+    } catch (e) {
+        throw e;
+    }
+
 };
 
 router.post("/user/login", async (req, res) => {
@@ -41,7 +78,7 @@ router.post("/user/login", async (req, res) => {
         const details = { _id: user._id.toString(), name: user.name, email: user.email };
         const token = generateToken(details);
         const refreshToken = generateRefreshToken(details);
-
+        
         user.tokens.push({ token: refreshToken });
         user.tokens = user.tokens.filter((token) => token.token !== req.cookies.refreshToken);
         await user.save();
@@ -136,26 +173,11 @@ router.post("/user/signup", async (req, res) => {
 router.get("/user/refresh", async (req, res) => {
     try {
         let refreshToken = req.cookies.refreshToken;
-        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
-
-        const details = { _id: decoded._id.toString(), name: decoded.name, email: decoded.email };
-        const user = await User.findById(details._id);
-
-        if(!user.tokens.find((token) => token.token === refreshToken)) throw "Refresh token invalid";
-
-        const token = generateToken(details);
-        refreshToken = generateRefreshToken(details);
-
-        res.cookie("token", token, tokenOptions);
-        res.cookie("refreshToken", refreshToken, refreshTokenOptions);
-
-        user.tokens.push({ token: refreshToken });
-        user.tokens = user.tokens.filter((token) => token.token !== req.cookies.refreshToken);
-        await user.save();
+        const details = await refreshAccessToken(refreshToken, res);
 
         res.send({
             success: true,
-            data: details,
+            data: details.decoded,
             details: {
                 code: "SUCCESS",
                 message: "Token refreshed successfully!"
@@ -188,6 +210,7 @@ router.post("/user/me", auth, async (req, res) => {
         let code = "SUCCESS", 
             message = "User data fetched successfully", 
             data = req.user;
+        data.newToken = req.newToken;
         res.send(getSuccess({ code, message, data }));
     } catch (e) {
         res.status(500).send(getError({
