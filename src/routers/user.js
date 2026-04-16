@@ -35,15 +35,9 @@ const generateRefreshToken = (details) => {
     return token;
 };
 
-export const refreshTokenBeforeExpiry = async (token, res) => {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const details = { _id: decoded._id.toString(), name: decoded.name, email: decoded.email };
-
-    const newToken = generateToken(details);
-
-    res.cookie("token", newToken, tokenOptions);
-
-    return newToken;
+export const refreshTokenBeforeExpiry = async (refreshToken, res) => {
+    const tokenObj = await refreshAccessToken(refreshToken, res);
+    return tokenObj.token;
 };
 
 export const refreshAccessToken = async (refreshToken, res) => {

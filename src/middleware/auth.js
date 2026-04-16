@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
             const currentTime = Math.floor(Date.now() / 1000);
             const timeLeft = decoded.exp - currentTime;
             if (timeLeft < 1800) {
-                req.newToken = await refreshTokenBeforeExpiry(token, res);
+                req.newToken = await refreshTokenBeforeExpiry(req.cookies.refreshToken, res);
             }
         } catch (e) {
             if(req.cookies.token && req.cookies.refreshToken) {
